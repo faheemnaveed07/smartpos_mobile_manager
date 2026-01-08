@@ -5,6 +5,7 @@ import '../../domain/usecases/get_customers.dart';
 import '../../domain/usecases/add_ledger_entry.dart';
 import '../../domain/usecases/get_customer_ledger.dart';
 import '../../domain/repositories/customer_repository.dart';
+import '../../../../core/services/sync_service.dart';
 
 class CustomerController extends GetxController {
   final GetCustomers _getCustomers;
@@ -48,6 +49,11 @@ class CustomerController extends GetxController {
       await _repository.addCustomer(customer);
       Get.snackbar('Success', 'Customer added successfully');
       loadCustomers(); // Refresh list
+
+      // Trigger background sync
+      if (Get.isRegistered<SyncService>()) {
+        SyncService.to.syncAll();
+      }
     } catch (e) {
       Get.snackbar('Error', 'Failed to add customer: $e');
     }
@@ -74,6 +80,11 @@ class CustomerController extends GetxController {
       Get.snackbar('Success', 'Entry added successfully');
       loadCustomers(); // Refresh list to update balances
       loadCustomerLedger(customerId); // Refresh ledger if open
+
+      // Trigger background sync
+      if (Get.isRegistered<SyncService>()) {
+        SyncService.to.syncAll();
+      }
     } catch (e) {
       Get.snackbar('Error', e.toString());
     }

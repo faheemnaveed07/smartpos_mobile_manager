@@ -6,6 +6,7 @@ import '../widgets/udhaar_tile.dart';
 import '../widgets/stock_alert_tile.dart';
 import '../widgets/sales_chart_tile.dart';
 import '../widgets/quick_action_button.dart';
+import '../../../../widgets/sync_indicator.dart';
 
 class DashboardScreen extends StatelessWidget {
   const DashboardScreen({super.key});
@@ -19,25 +20,13 @@ class DashboardScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('POS Dashboard'),
         actions: [
+          // Sync status indicator
+          const SyncIndicator(),
           // Refresh button
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => controller.refresh(),
           ),
-          // Sync status indicator
-          Obx(() {
-            final pending = controller.stats.value?.pendingSyncCount ?? 0;
-            return IconButton(
-              icon: Badge(
-                label: Text('$pending'),
-                isLabelVisible: pending > 0,
-                child: const Icon(Icons.cloud_upload_outlined),
-              ),
-              onPressed: () {
-                // TODO: Navigate to sync screen
-              },
-            );
-          }),
         ],
       ),
 

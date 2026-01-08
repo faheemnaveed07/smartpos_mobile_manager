@@ -6,6 +6,8 @@ import 'firebase_options.dart';
 import 'theme/app_theme.dart';
 import 'routes/app_pages.dart';
 import 'services/sqlite_service.dart';
+import 'core/services/sync_service.dart';
+import 'core/services/backup_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +19,10 @@ void main() async {
   final sqliteService = SQLiteService();
   final database = await sqliteService.database;
   Get.put<Database>(database); // Register database globally
+
+  // Initialize SyncService and BackupService as GetxServices
+  Get.put(SyncService());
+  Get.put(BackupService());
 
   runApp(const MyApp());
 }

@@ -3,6 +3,7 @@ import 'auth_controller.dart';
 import '../models/product_model.dart';
 import '../services/sqlite_service.dart';
 import '../services/firebase_service.dart';
+import '../core/services/sync_service.dart';
 
 class ProductController extends GetxController {
   // Services
@@ -72,6 +73,11 @@ class ProductController extends GetxController {
       }
 
       Get.snackbar('Success', 'Product added successfully');
+
+      // Trigger background sync
+      if (Get.isRegistered<SyncService>()) {
+        SyncService.to.syncAll();
+      }
     } catch (e) {
       Get.snackbar('Error', 'Saved locally but error occurred: $e');
     }
@@ -152,6 +158,11 @@ class ProductController extends GetxController {
       }
 
       Get.snackbar('Success', 'Product updated successfully');
+
+      // Trigger background sync
+      if (Get.isRegistered<SyncService>()) {
+        SyncService.to.syncAll();
+      }
     } catch (e) {
       Get.snackbar('Error', 'Update error: $e');
     }
@@ -173,6 +184,11 @@ class ProductController extends GetxController {
       }
 
       Get.snackbar('Success', 'Product deleted successfully');
+
+      // Trigger background sync
+      if (Get.isRegistered<SyncService>()) {
+        SyncService.to.syncAll();
+      }
     } catch (e) {
       Get.snackbar('Error', 'Delete error: $e');
     }
