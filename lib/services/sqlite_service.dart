@@ -16,9 +16,9 @@ class SQLiteService {
     String path = join(await getDatabasesPath(), 'smartpos.db');
     return await openDatabase(
       path,
-      version: 1,
+      version: 3, // Incremented version for sales table
       onCreate: (db, version) async {
-        // Table create kar rahe hain jo ProductModel se match kare
+        // Products table
         await db.execute('''
           CREATE TABLE products(
             id TEXT PRIMARY KEY,
@@ -33,6 +33,113 @@ class SQLiteService {
             isSynced INTEGER
           )
         ''');
+
+        // Customers table
+        await db.execute('''
+          CREATE TABLE customers(
+            id TEXT PRIMARY KEY,
+            name TEXT NOT NULL,
+            phone TEXT NOT NULL,
+            email TEXT,
+            address TEXT,
+            type TEXT DEFAULT 'REGULAR',
+            outstandingBalance REAL DEFAULT 0,
+            createdAt TEXT,
+            isSynced INTEGER DEFAULT 0
+          )
+        ''');
+
+        // Ledger entries table
+        await db.execute('''
+          CREATE TABLE ledger_entries(
+            id TEXT PRIMARY KEY,
+            customerId TEXT NOT NULL,
+            date TEXT NOT NULL,
+            amount REAL NOT NULL,
+            type TEXT NOT NULL,
+            description TEXT,
+            isSynced INTEGER DEFAULT 0,
+            FOREIGN KEY (customerId) REFERENCES customers(id) ON DELETE CASCADE
+          )
+        ''');
+
+        // Sales table
+        await db.execute('''
+          CREATE TABLE sales(
+            id TEXT PRIMARY KEY,
+            saleDate TEXT NOT NULL,
+            customerId TEXT,
+            customerName TEXT,
+            items TEXT NOT NULL,
+            subtotal REAL NOT NULL,
+            discount REAL DEFAULT 0,
+            tax REAL DEFAULT 0,
+            grandTotal REAL NOT NULL,
+            paymentMethod TEXT DEFAULT 'CASH',
+            amountPaid REAL,
+            change REAL DEFAULT 0,
+            profit REAL DEFAULT 0,
+            isSynced INTEGER DEFAULT 0,
+            createdAt TEXT,
+            FOREIGN KEY (customerId) REFERENCES customers(id)
+          )
+        ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          // Add customers table
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS customers(
+              id TEXT PRIMARY KEY,
+              name TEXT NOT NULL,
+              phone TEXT NOT NULL,
+              email TEXT,
+              address TEXT,
+              type TEXT DEFAULT 'REGULAR',
+              outstandingBalance REAL DEFAULT 0,
+              createdAt TEXT,
+              isSynced INTEGER DEFAULT 0
+            )
+          ''');
+
+          // Add ledger entries table
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS ledger_entries(
+              id TEXT PRIMARY KEY,
+              customerId TEXT NOT NULL,
+              date TEXT NOT NULL,
+              amount REAL NOT NULL,
+              type TEXT NOT NULL,
+              description TEXT,
+              isSynced INTEGER DEFAULT 0,
+              FOREIGN KEY (customerId) REFERENCES customers(id) ON DELETE CASCADE
+            )
+          ''');
+        }
+
+        if (oldVersion < 3) {
+          // Add sales table
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS sales(
+              id TEXT PRIMARY KEY,
+              saleDate TEXT NOT NULL,
+              customerId TEXT,
+              customerName TEXT,
+              items TEXT NOT NULL,
+              subtotal REAL NOT NULL,
+              discount REAL DEFAULT 0,
+              tax REAL DEFAULT 0,
+              grandTotal REAL NOT NULL,
+              paymentMethod TEXT DEFAULT 'CASH',
+              amountPaid REAL,
+              change REAL DEFAULT 0,
+              profit REAL DEFAULT 0,
+              isSynced INTEGER DEFAULT 0,
+              createdAt TEXT,
+              FOREIGN KEY (customerId) REFERENCES customers(id)
+            )
+          ''');
+        }
       },
     );
   }

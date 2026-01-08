@@ -1,5 +1,8 @@
 import 'package:get/get.dart';
 import 'package:smartpos_mobile_manager/bindings/app_binding.dart';
+import 'package:smartpos_mobile_manager/features/customer/presentation/bindings/customer_binding.dart';
+import 'package:smartpos_mobile_manager/features/customer/presentation/screens/customer_detail_screen.dart';
+import 'package:smartpos_mobile_manager/features/customer/presentation/screens/customer_list_screen.dart';
 import 'package:smartpos_mobile_manager/views/auth/signup_screen.dart';
 import 'package:smartpos_mobile_manager/views/pos/pos_screen.dart';
 import 'package:smartpos_mobile_manager/views/products/add_product_screen.dart';
@@ -37,6 +40,16 @@ class AppPages {
       name: '/dashboard',
       page: () => const DashboardScreen(),
       binding: DashboardBinding(),
+    ),
+    GetPage(
+      name: '/customers',
+      page: () => const CustomerListScreen(),
+      binding: CustomerBinding(),
+    ),
+    GetPage(
+      name: '/customer-detail',
+      page: () => CustomerDetailScreen(),
+      binding: CustomerBinding(),
     ),
   ];
 }
