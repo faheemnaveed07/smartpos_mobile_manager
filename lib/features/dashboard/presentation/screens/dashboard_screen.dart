@@ -266,7 +266,7 @@ class DashboardScreen extends StatelessWidget {
               color: Colors.grey,
               onTap: () {
                 Get.back();
-                Get.snackbar('Coming Soon', 'Settings feature coming soon');
+                Get.toNamed('/settings');
               },
             ),
             const SizedBox(height: 10),

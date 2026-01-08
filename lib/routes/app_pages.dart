@@ -5,6 +5,8 @@ import 'package:smartpos_mobile_manager/features/customer/presentation/screens/c
 import 'package:smartpos_mobile_manager/features/customer/presentation/screens/customer_list_screen.dart';
 import 'package:smartpos_mobile_manager/features/reports/presentation/bindings/reports_binding.dart';
 import 'package:smartpos_mobile_manager/features/reports/presentation/screens/reports_screen.dart';
+import 'package:smartpos_mobile_manager/features/settings/presentation/bindings/settings_binding.dart';
+import 'package:smartpos_mobile_manager/features/settings/presentation/screens/settings_screen.dart';
 import 'package:smartpos_mobile_manager/views/auth/signup_screen.dart';
 import 'package:smartpos_mobile_manager/views/pos/pos_screen.dart';
 import 'package:smartpos_mobile_manager/views/products/add_product_screen.dart';
@@ -57,6 +59,11 @@ class AppPages {
       name: '/reports',
       page: () => const ReportsScreen(),
       binding: ReportsBinding(),
+    ),
+    GetPage(
+      name: '/settings',
+      page: () => const SettingsScreen(),
+      binding: SettingsBinding(),
     ),
   ];
 }

@@ -64,7 +64,7 @@ class _ReportsScreenState extends State<ReportsScreen>
                         color: Colors.white,
                       ),
                     )
-                  : const Icon(Icons.picture_as_pdf),
+                  : const Icon(Icons.picture_as_pdf, color: Colors.redAccent),
               onPressed: controller.isLoading.value
                   ? null
                   : () => controller.exportToPDF(
@@ -82,11 +82,22 @@ class _ReportsScreenState extends State<ReportsScreen>
           controller: _tabController,
           indicatorColor: Colors.white,
           indicatorWeight: 3,
+          labelColor: Colors.white,
+          unselectedLabelColor: Colors.white70,
           labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-          tabs: const [
-            Tab(icon: Icon(Icons.trending_up), text: 'Sales'),
-            Tab(icon: Icon(Icons.inventory_2), text: 'Stock'),
-            Tab(icon: Icon(Icons.people), text: 'Ledger'),
+          tabs: [
+            Tab(
+              icon: Icon(Icons.trending_up, color: Colors.greenAccent[400]),
+              text: 'Sales',
+            ),
+            Tab(
+              icon: Icon(Icons.inventory_2, color: Colors.orangeAccent[400]),
+              text: 'Stock',
+            ),
+            Tab(
+              icon: Icon(Icons.people, color: Colors.cyanAccent[400]),
+              text: 'Ledger',
+            ),
           ],
         ),
       ),
@@ -421,8 +432,9 @@ class _ReportsScreenState extends State<ReportsScreen>
       ),
       child: Row(
         children: [
+          // Pie Chart - Left side (smaller)
           Expanded(
-            flex: 2,
+            flex: 3,
             child: PieChart(
               PieChartData(
                 sectionsSpace: 2,
@@ -445,6 +457,8 @@ class _ReportsScreenState extends State<ReportsScreen>
               ),
             ),
           ),
+          const SizedBox(width: 16),
+          // Legend - Right side (more space)
           Expanded(
             flex: 2,
             child: Column(
@@ -463,18 +477,18 @@ class _ReportsScreenState extends State<ReportsScreen>
                   child: Row(
                     children: [
                       Container(
-                        width: 12,
-                        height: 12,
+                        width: 10,
+                        height: 10,
                         decoration: BoxDecoration(
                           color: colors[e.key % colors.length],
                           shape: BoxShape.circle,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 6),
                       Flexible(
                         child: Text(
                           e.value.label,
-                          style: const TextStyle(fontSize: 12),
+                          style: const TextStyle(fontSize: 11),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
