@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:smartpos_mobile_manager/views/products/product_list_screen.dart';
 // import 'package:firebase_auth/firebase_auth.dart'; // Commented out for Dev Mode
 // import '../services/auth_service.dart'; // Commented out for Dev Mode
 
@@ -39,17 +38,8 @@ class AuthController extends GetxController {
         colorText: Colors.white,
       );
 
-      // Navigate to Dashboard
-      // AuthController already registered, ProductListScreen will Get.put(ProductController)
-      Get.offAll(
-        () => ProductListScreen(),
-        binding: BindingsBuilder(() {
-          // Ensure AuthController stays available for ProductController
-          if (!Get.isRegistered<AuthController>()) {
-            Get.put(AuthController());
-          }
-        }),
-      );
+      // Navigate to Dashboard (Clean Architecture Screen)
+      Get.offAllNamed('/dashboard');
     } else {
       // Fail Logic
       errorMessage.value = 'Email and Password required';
