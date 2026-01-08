@@ -28,9 +28,15 @@ class AddCustomerDialog extends StatelessWidget {
                 children: [
                   const Icon(Icons.person_add, color: Colors.blue, size: 28),
                   const SizedBox(width: 12),
-                  const Text(
-                    'Add New Customer',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  const Expanded(
+                    child: Text(
+                      'Add New Customer',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
                 ],
               ),
@@ -145,7 +151,7 @@ class AddCustomerDialog extends StatelessWidget {
                         ),
                       ),
                       child: const Text(
-                        'Add Customer',
+                        'Add ',
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,

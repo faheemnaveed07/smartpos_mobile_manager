@@ -17,9 +17,13 @@ class AppTheme {
       appBarTheme: AppBarTheme(
         backgroundColor: primaryColor,
         elevation: 0,
+        foregroundColor: Colors.white, // Title & icons color
+        iconTheme: const IconThemeData(color: Colors.white),
+        actionsIconTheme: const IconThemeData(color: Colors.white),
         titleTextStyle: GoogleFonts.poppins(
           fontSize: 20,
           fontWeight: FontWeight.w600,
+          color: Colors.white,
         ),
       ),
 
@@ -33,6 +37,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: accentColor,
+          foregroundColor: Colors.white, // Button text color
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),

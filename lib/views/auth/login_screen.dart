@@ -110,9 +110,11 @@ class LoginScreen extends StatelessWidget {
                         : FadeInUp(
                             child: SizedBox(
                               width: double.infinity,
-                              height: 50,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -127,7 +129,7 @@ class LoginScreen extends StatelessWidget {
                                 },
                                 child: const Text(
                                   'Login',
-                                  style: TextStyle(fontSize: 18),
+                                  style: TextStyle(fontSize: 16),
                                 ),
                               ),
                             ),

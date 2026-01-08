@@ -151,28 +151,39 @@ class SignupScreen extends StatelessWidget {
                     return _authController.isLoading.value
                         ? const Center(child: CircularProgressIndicator())
                         : FadeInUp(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  // TODO: Implement signup method in AuthController
-                                  _authController.signUp(
-                                    _emailController.text.trim(),
-                                    _passwordController.text,
-                                    _nameController.text,
-                                    _phoneController.text,
-                                  );
-                                  Get.snackbar(
-                                    'Success',
-                                    'Account created! Please login.',
-                                    snackPosition: SnackPosition.BOTTOM,
-                                    backgroundColor: Colors.green,
-                                  );
-                                  Get.offNamed('/login');
-                                }
-                              },
-                              child: const Text(
-                                'Sign Up',
-                                style: TextStyle(fontSize: 18),
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 14,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    // TODO: Implement signup method in AuthController
+                                    _authController.signUp(
+                                      _emailController.text.trim(),
+                                      _passwordController.text,
+                                      _nameController.text,
+                                      _phoneController.text,
+                                    );
+                                    Get.snackbar(
+                                      'Success',
+                                      'Account created! Please login.',
+                                      snackPosition: SnackPosition.BOTTOM,
+                                      backgroundColor: Colors.green,
+                                    );
+                                    Get.offNamed('/login');
+                                  }
+                                },
+                                child: const Text(
+                                  'Sign Up',
+                                  style: TextStyle(fontSize: 16),
+                                ),
                               ),
                             ),
                           );
