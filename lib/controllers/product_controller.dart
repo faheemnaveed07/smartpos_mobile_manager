@@ -1,15 +1,17 @@
 import 'package:get/get.dart';
+// Note: Ensure AuthController is created and put in main.dart or app_pages.dart
+// import 'package:smartpos_mobile_manager/controllers/auth_controller.dart';
 import '../models/product_model.dart';
 import '../services/sqlite_service.dart';
 import '../services/firebase_service.dart';
 
 class ProductController extends GetxController {
-  // Services (line 6)
+  // Services
   final SQLiteService _sqliteService = Get.put(SQLiteService());
   final FirebaseService _firebaseService = Get.put(FirebaseService());
 
-  // Observables (line 10)
-  final RxList<Product> products = <Product>[].obs;
+  // Observables
+  final RxList<ProductModel> products = <ProductModel>[].obs;
   final RxBool isLoading = false.obs;
   final RxBool isSyncing = false.obs;
 
@@ -17,46 +19,81 @@ class ProductController extends GetxController {
   void onInit() {
     super.onInit();
     loadProducts();
-    // TODO: Listen to Firebase changes and auto-sync
   }
 
-  // Load products from local DB (line 21)
+  // Load products from local DB (Offline First Approach)
   Future<void> loadProducts() async {
     isLoading.value = true;
     try {
-      // TODO: Load from SQLite, store in products list
-      // HINT: products.value = await _sqliteService.getProducts();
+      final localData = await _sqliteService.getProducts();
+      products.assignAll(localData);
+    } catch (e) {
+      print("Error loading products: $e");
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Add product (offline-first) (line 31)
-  Future<void> addProduct(Product product) async {
+  // Add product (Save Local -> Try Sync -> Update UI)
+  Future<void> addProduct(ProductModel product) async {
     try {
-      // 1. Save to SQLite (line 34)
+      // 1. Save to SQLite immediately
       await _sqliteService.insertProduct(product);
 
-      // 2. Try to sync to Firebase (line 37)
-      if (await Get.find<AuthController>().isOnline()) {
+      // Update UI immediately (Optimistic UI)
+      products.insert(0, product);
+
+      // 2. Try to sync to Firebase if Online
+      // Note: Make sure AuthController is accessible via Get.find()
+      // bool isOnline = Get.find<AuthController>().isOnline();
+      bool isOnline =
+          true; // Temporary hardcoded check for testing logic. Replace with AuthController logic.
+
+      if (isOnline) {
+        await _firebaseService.addProduct(product);
+        await _sqliteService.markAsSynced(product.id);
+
+        // Update the item in list to show "synced" status
+        int index = products.indexWhere((p) => p.id == product.id);
+        if (index != -1) {
+          products[index] = product.copyWith(isSynced: true);
+        }
+      }
+
+      Get.snackbar('Success', 'Product added successfully');
+    } catch (e) {
+      Get.snackbar('Error', 'Saved locally but error occurred: $e');
+    }
+  }
+
+  // Sync all unsynced products
+  Future<void> syncProducts() async {
+    if (isSyncing.value) return; // Prevent double click
+
+    isSyncing.value = true;
+    try {
+      // 1. Get all unsynced products from SQLite
+      List<ProductModel> unsyncedProducts = await _sqliteService
+          .getUnsyncedProducts();
+
+      if (unsyncedProducts.isEmpty) {
+        Get.snackbar('Info', 'All products are already synced');
+        return;
+      }
+
+      // 2. Loop and upload
+      for (var product in unsyncedProducts) {
         await _firebaseService.addProduct(product);
         await _sqliteService.markAsSynced(product.id);
       }
 
-      // 3. Reload local list (line 43)
+      // 3. Reload list to update UI icons
       await loadProducts();
-      Get.snackbar('Success', 'Product added successfully');
-    } catch (e) {
-      Get.snackbar('Error', e.toString());
-    }
-  }
 
-  // Sync all unsynced products (line 50)
-  Future<void> syncProducts() async {
-    isSyncing.value = true;
-    try {
-      // TODO: Get unsynced products, upload to Firebase, mark as synced
-      Get.snackbar('Success', 'Products synced');
+      Get.snackbar(
+        'Success',
+        '${unsyncedProducts.length} Products synced successfully',
+      );
     } catch (e) {
       Get.snackbar('Sync Error', e.toString());
     } finally {

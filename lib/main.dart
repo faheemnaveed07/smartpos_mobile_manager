@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'views/splash/splash_screen.dart';
 import 'theme/app_theme.dart';
 import 'routes/app_pages.dart';
@@ -8,9 +9,9 @@ import 'routes/app_pages.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Firebase initialize karo yahan (line 9)
+  // Initialize Firebase
   await Firebase.initializeApp(
-    options: FirebaseOptions(/* firebase project ki details yahan daalo */),
+    options: DefaultFirebaseOptions.currentPlatform,
   );
 
   runApp(const MyApp());
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
 
-      debugShowBaner: false, // Spelling check karo!
+      debugShowCheckedModeBanner: false, // use correct parameter name
     );
   }
 }

@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
 import 'package:smartpos_mobile_manager/bindings/app_binding.dart';
 import 'package:smartpos_mobile_manager/views/auth/signup_screen.dart';
+import 'package:smartpos_mobile_manager/views/products/product_list_screen.dart';
 import '../views/splash/splash_screen.dart';
 import '../views/auth/login_screen.dart';
-import '../views/dashboard/dashboard_screen.dart';
 
 class AppPages {
   static const INITIAL = '/splash';
@@ -17,10 +17,10 @@ class AppPages {
       // binding: AuthBinding(), // Yeh baad mein add karna hai
     ),
     GetPage(name: '/signup', page: () => SignupScreen(), binding: AppBinding()),
-    GetPage(
-      name: '/dashboard',
-      page: () => DashboardScreen(),
-      binding: AppBinding(),
-    ),
+    // GetPage(
+    //   name: '/dashboard',
+    //   page: () => ProductListScreen(),
+    //   binding: AppBinding(),
+    // ),
   ];
 }

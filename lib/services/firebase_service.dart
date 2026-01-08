@@ -1,35 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:googleapis/androidenterprise/v1.dart';
 import '../models/product_model.dart';
 
 class FirebaseService {
   final CollectionReference productsCollection = FirebaseFirestore.instance
       .collection('products');
 
-  // Add product to Firebase (line 7)
-  Future<void> addProduct(Product product) async {
-    // TODO: Convert to Map and set with product.id as doc ID
+  // Add product to Firebase
+  Future<void> addProduct(ProductModel product) async {
+    // Hum .set() use kar rahe hain taakay jo ID humne generate ki hai wahi document ID banay
+    // Also ensuring isSynced is true on Firebase side
+    final productData = product.toMap();
+    productData['isSynced'] = true;
+
+    await productsCollection.doc(product.id).set(productData);
   }
 
-  // Get all products (line 13)
-  Future<List<Product>> getProducts() async {
-    // TODO: Get docs, convert to Product list
-    return [];
+  // Update product
+  Future<void> updateProduct(ProductModel product) async {
+    await productsCollection.doc(product.id).update(product.toMap());
   }
 
-  // Update product (line 19)
-  Future<void> updateProduct(Product product) async {
-    // TODO: Update doc
-  }
-
-  // Delete product (line 24)
+  // Delete product
   Future<void> deleteProduct(String id) async {
-    // TODO: Delete doc
-  }
-
-  // Listen to real-time changes (line 29)
-  Stream<List<Product>> listenToProducts() {
-    // TODO: Return snapshot stream, map to Product list
-    return const Stream.empty();
+    await productsCollection.doc(id).delete();
   }
 }

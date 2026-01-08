@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     projectId: 'pos-app-d7bcb',
     storageBucket: 'pos-app-d7bcb.firebasestorage.app',
   );
+
 }

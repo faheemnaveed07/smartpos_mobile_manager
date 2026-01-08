@@ -11,51 +11,81 @@ class SQLiteService {
     return _database!;
   }
 
-  // Database initialize (line 13)
+  // Database initialize
   Future<Database> _initDB() async {
     String path = join(await getDatabasesPath(), 'smartpos.db');
     return await openDatabase(
       path,
       version: 1,
       onCreate: (db, version) async {
-        // TODO: Create products table
-        // HINT: Use db.execute('CREATE TABLE products (...)')
-        // Columns: id (TEXT PRIMARY KEY), name, sku, buyingPrice, sellingPrice, stock, imageUrl, category, createdAt, isSynced
+        // Table create kar rahe hain jo ProductModel se match kare
+        await db.execute('''
+          CREATE TABLE products(
+            id TEXT PRIMARY KEY,
+            name TEXT,
+            sku TEXT,
+            buyingPrice REAL,
+            sellingPrice REAL,
+            stock INTEGER,
+            imagePath TEXT,
+            category TEXT,
+            createdAt TEXT,
+            isSynced INTEGER
+          )
+        ''');
       },
     );
   }
 
-  // Insert product (line 26)
-  Future<void> insertProduct(Product product) async {
+  // Insert product
+  Future<void> insertProduct(ProductModel product) async {
     final db = await database;
-    // TODO: Insert logic with conflictAlgorithm: ConflictAlgorithm.replace
+    await db.insert(
+      'products',
+      product.toMap(),
+      conflictAlgorithm:
+          ConflictAlgorithm.replace, // Agar ID same ho to overwrite kare
+    );
   }
 
-  // Get all products (line 32)
-  Future<List<Product>> getProducts() async {
+  // Get all products
+  Future<List<ProductModel>> getProducts() async {
     final db = await database;
-    // TODO: Query all products, return List<Product>
-    return [];
+    final List<Map<String, dynamic>> maps = await db.query(
+      'products',
+      orderBy: "createdAt DESC",
+    );
+    return List.generate(maps.length, (i) {
+      return ProductModel.fromMap(maps[i]);
+    });
   }
 
-  // Update product (line 39)
-  Future<void> updateProduct(Product product) async {
-    // TODO: Update logic
+  // Get unsynced products (For Sync Logic)
+  Future<List<ProductModel>> getUnsyncedProducts() async {
+    final db = await database;
+    // Sirf wo products layein jahan isSynced 0 hai
+    final List<Map<String, dynamic>> maps = await db.query(
+      'products',
+      where: 'isSynced = ?',
+      whereArgs: [0],
+    );
+    return List.generate(maps.length, (i) => ProductModel.fromMap(maps[i]));
   }
 
-  // Delete product (line 44)
-  Future<void> deleteProduct(String id) async {
-    // TODO: Delete logic
-  }
-
-  // Get unsynced products (line 49)
-  Future<List<Product>> getUnsyncedProducts() async {
-    // TODO: Query where isSynced = 0
-    return [];
-  }
-
-  // Mark as synced (line 55)
+  // Mark as synced
   Future<void> markAsSynced(String id) async {
-    // TODO: Update isSynced = 1
+    final db = await database;
+    await db.update(
+      'products',
+      {'isSynced': 1}, // 1 means true in SQLite
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  // Delete product
+  Future<void> deleteProduct(String id) async {
+    final db = await database;
+    await db.delete('products', where: 'id = ?', whereArgs: [id]);
   }
 }

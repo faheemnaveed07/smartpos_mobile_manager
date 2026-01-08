@@ -1,53 +1,63 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../services/auth_service.dart';
+import 'package:smartpos_mobile_manager/views/products/product_list_screen.dart';
+// import 'package:firebase_auth/firebase_auth.dart'; // Commented out for Dev Mode
+// import '../services/auth_service.dart'; // Commented out for Dev Mode
 
 class AuthController extends GetxController {
-  // Dependencies (line 5)
-  final AuthService _authService = Get.put(AuthService());
+  // --- REAL DEPENDENCIES (Commented Out) ---
+  // final AuthService _authService = Get.put(AuthService());
 
-  // Observables (line 8)
+  // --- OBSERVABLES ---
   final RxBool isLoading = false.obs;
   final RxString errorMessage = ''.obs;
-  final Rxn<User> currentUser = Rxn<User>();
+  // final Rxn<User> currentUser = Rxn<User>(); // Firebase user ki zaroorat nahi
+  final RxBool isLoggedIn = false.obs; // Simple boolean for Dev Mode
 
   @override
   void onInit() {
     super.onInit();
-    // Auth state listen karo (line 16)
-    // TODO: Stream ko listen karo aur currentUser update karo
+    // Real listener off kar diya hai taakay error na aye
   }
 
-  // Login method (line 20)
+  // --- DUMMY LOGIN ---
   Future<void> login(String email, String password) async {
-    // Loading shuru karo
     isLoading.value = true;
     errorMessage.value = '';
 
-    try {
-      // TODO: Auth service ko call karo
-      // HINT: var user = await _authService.loginWithEmail(...)
+    // Fake Network Delay (1 second) taakay loading spinner check ho sakay
+    await Future.delayed(const Duration(seconds: 1));
 
-      if (user != null) {
-        // Success: Dashboard pe jao
-        Get.offAllNamed('/dashboard');
-      }
-    } catch (e) {
-      errorMessage.value = e.toString();
+    if (email.isNotEmpty && password.isNotEmpty) {
+      // Success Logic
+      isLoggedIn.value = true;
+      Get.snackbar(
+        'Dev Mode',
+        'Login Bypassed! Welcome Admin.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+
+      // Navigate to Dashboard
+      // Make sure apki app_pages.dart mein '/dashboard' route defined ho
+      //Get.offAllNamed('/dashboard');
+      Get.offAll(() => ProductListScreen());
+    } else {
+      // Fail Logic
+      errorMessage.value = 'Email and Password required';
       Get.snackbar(
         'Error',
         errorMessage.value,
-        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-    } finally {
-      isLoading.value = false;
     }
+
+    isLoading.value = false;
   }
 
-  // Signup method (line 45)
+  // --- DUMMY SIGNUP ---
   Future<void> signUp(
     String email,
     String password, [
@@ -57,38 +67,54 @@ class AuthController extends GetxController {
     isLoading.value = true;
     errorMessage.value = '';
 
-    try {
-      final user = await _authService.signUpWithEmail(email, password);
+    await Future.delayed(const Duration(seconds: 1));
 
-      if (user != null) {
-        currentUser.value = user;
-        Get.offAllNamed('/dashboard');
-      } else {
-        errorMessage.value = 'Signup failed';
-        Get.snackbar(
-          'Error',
-          errorMessage.value,
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-      }
-    } catch (e) {
-      errorMessage.value = e.toString();
+    if (email.isNotEmpty && password.length >= 6) {
+      isLoggedIn.value = true;
+      Get.snackbar(
+        'Dev Mode',
+        'Fake Account Created!',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+      Get.offAllNamed('/dashboard');
+    } else {
+      errorMessage.value = 'Invalid Email or Password (min 6 chars)';
       Get.snackbar(
         'Error',
         errorMessage.value,
-        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-    } finally {
-      isLoading.value = false;
     }
+
+    isLoading.value = false;
   }
 
-  // Logout method (line 50)
+  // --- DUMMY LOGOUT ---
   Future<void> logout() async {
-    // TODO: Logout karwao aur login screen pe bhejo
+    isLoading.value = true;
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    isLoggedIn.value = false;
+
+    // Navigate back to Login Screen
+    // Ensure '/login' route exists or use: Get.offAll(() => LoginScreen());
+    Get.offAllNamed('/login');
+
+    isLoading.value = false;
+  }
+
+  // --- CRITICAL HELPER FOR PRODUCT CONTROLLER ---
+  // ProductController mein humne check lagaya tha:
+  // if (await Get.find<AuthController>().isOnline()) ...
+  // Agar ye method nahi hoga to App Crash hogi.
+
+  Future<bool> isOnline() async {
+    // Development ke liye hum isay FALSE return kar rahe hain.
+    // Iska faida: ProductController Firebase par data send karne ki koshish nahi karega.
+    // Sirf SQLite (Local DB) use hoga, jo abhi hum test karna chahte hain.
+    return false;
   }
 }

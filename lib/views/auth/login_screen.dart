@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:smartpos_mobile_manager/core/utils/validators.dart';
+import '../../core/utils/validators.dart'; // Ensure ye file exist karti ho
 import '../../controllers/auth_controller.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -25,18 +25,23 @@ class LoginScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Logo animation (line 29)
+                  // Logo animation
                   BounceInDown(
                     child: Center(
                       child: SvgPicture.asset(
-                        'assets/logo.svg', // TODO: Logo asset add karo
+                        'assets/logo.svg', // Make sure assets folder mein logo.svg ho
                         height: 120,
+                        placeholderBuilder: (context) => const Icon(
+                          Icons.store,
+                          size: 100,
+                          color: Colors.blue,
+                        ), // Fallback icon
                       ),
                     ),
                   ),
                   const SizedBox(height: 40),
 
-                  // Welcome text (line 38)
+                  // Welcome text
                   FadeInLeft(
                     child: Text(
                       'Welcome Back!',
@@ -57,7 +62,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 40),
 
-                  // Email field (line 53)
+                  // Email field
                   FadeInUp(
                     child: TextFormField(
                       controller: _emailController,
@@ -68,17 +73,12 @@ class LoginScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(12),
                         ),
                       ),
-                      validator: (value) {
-                        // TODO: Email validation logic daalo
-                        validator:
-                        (value) => Validators.validateEmail(value);
-                        return null;
-                      },
+                      validator: (value) => Validators.validateEmail(value),
                     ),
                   ),
                   const SizedBox(height: 20),
 
-                  // Password field (line 69)
+                  // Password field
                   FadeInUp(
                     child: TextFormField(
                       controller: _passwordController,
@@ -91,37 +91,51 @@ class LoginScreen extends StatelessWidget {
                         ),
                       ),
                       validator: (value) {
-                        // TODO: Password validation logic daalo
+                        if (value == null || value.isEmpty) {
+                          return 'Password is required';
+                        }
+                        if (value.length < 6) {
+                          return 'Password must be at least 6 characters';
+                        }
                         return null;
                       },
                     ),
                   ),
                   const SizedBox(height: 30),
 
-                  // Login button (line 85)
+                  // Login button
                   Obx(() {
                     return _authController.isLoading.value
                         ? const Center(child: CircularProgressIndicator())
                         : FadeInUp(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  _authController.login(
-                                    _emailController.text.trim(),
-                                    _passwordController.text,
-                                  );
-                                }
-                              },
-                              child: const Text(
-                                'Login',
-                                style: TextStyle(fontSize: 18),
+                            child: SizedBox(
+                              width: double.infinity,
+                              height: 50,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    _authController.login(
+                                      _emailController.text.trim(),
+                                      _passwordController.text,
+                                    );
+                                  }
+                                },
+                                child: const Text(
+                                  'Login',
+                                  style: TextStyle(fontSize: 18),
+                                ),
                               ),
                             ),
                           );
                   }),
                   const SizedBox(height: 20),
 
-                  // Signup link (line 104)
+                  // Signup link
                   FadeInUp(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
