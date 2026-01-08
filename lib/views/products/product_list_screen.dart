@@ -108,7 +108,7 @@ class ProductListScreen extends StatelessWidget {
             ),
             // Delete action
             SlidableAction(
-              onPressed: (context) => _showDeleteDialog(product.id),
+              onPressed: (context) => _showDeleteDialog(product),
               backgroundColor: Colors.red,
               icon: Icons.delete,
               label: 'Delete',
@@ -184,31 +184,114 @@ class ProductListScreen extends StatelessWidget {
               // Tap par edit screen kholne ke liye
               Get.to(() => const AddProductScreen(), arguments: product);
             },
+            // Long press par delete popup
+            onLongPress: () {
+              _showDeleteDialog(product);
+            },
           ),
         ),
       ),
     );
   }
 
-  // Delete confirmation dialog
-  void _showDeleteDialog(String id) {
-    Get.defaultDialog(
-      title: 'Delete Product?',
-      middleText: 'This will delete the product locally and from cloud.',
-      textConfirm: 'Delete',
-      textCancel: 'Cancel',
-      confirmTextColor: Colors.white,
-      buttonColor: Colors.red,
-      onConfirm: () {
-        // 🔥 FIX 3: Calling delete method from controller
-        // Note: Ensure deleteProduct method exists in ProductController
-        // _productController.deleteProduct(id);
-        Get.back();
-        Get.snackbar(
-          "Info",
-          "Delete logic implementation pending in Controller",
-        );
-      },
+  // Delete confirmation dialog with product details
+  void _showDeleteDialog(ProductModel product) {
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            const Icon(
+              Icons.warning_amber_rounded,
+              color: Colors.red,
+              size: 28,
+            ),
+            const SizedBox(width: 8),
+            const Text('Delete Product?'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Are you sure you want to delete this product?',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey[100],
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.grey[300],
+                    backgroundImage:
+                        (product.imagePath != null &&
+                            product.imagePath!.isNotEmpty)
+                        ? FileImage(File(product.imagePath!))
+                        : null,
+                    child:
+                        (product.imagePath == null ||
+                            product.imagePath!.isEmpty)
+                        ? const Icon(Icons.image, size: 20, color: Colors.grey)
+                        : null,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product.name,
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          'SKU: ${product.sku}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Text(
+                    'Rs. ${product.sellingPrice.toStringAsFixed(0)}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'This will delete the product locally${product.isSynced ? ' and from cloud' : ''}.',
+              style: TextStyle(fontSize: 12, color: Colors.grey[500]),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+              _productController.deleteProduct(product.id);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
     );
   }
 }

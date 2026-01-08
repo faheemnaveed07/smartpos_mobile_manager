@@ -83,6 +83,17 @@ class SQLiteService {
     );
   }
 
+  // Update product
+  Future<void> updateProduct(ProductModel product) async {
+    final db = await database;
+    await db.update(
+      'products',
+      product.toMap(),
+      where: 'id = ?',
+      whereArgs: [product.id],
+    );
+  }
+
   // Delete product
   Future<void> deleteProduct(String id) async {
     final db = await database;

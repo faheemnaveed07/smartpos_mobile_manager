@@ -40,9 +40,16 @@ class AuthController extends GetxController {
       );
 
       // Navigate to Dashboard
-      // Make sure apki app_pages.dart mein '/dashboard' route defined ho
-      //Get.offAllNamed('/dashboard');
-      Get.offAll(() => ProductListScreen());
+      // AuthController already registered, ProductListScreen will Get.put(ProductController)
+      Get.offAll(
+        () => ProductListScreen(),
+        binding: BindingsBuilder(() {
+          // Ensure AuthController stays available for ProductController
+          if (!Get.isRegistered<AuthController>()) {
+            Get.put(AuthController());
+          }
+        }),
+      );
     } else {
       // Fail Logic
       errorMessage.value = 'Email and Password required';
@@ -109,12 +116,11 @@ class AuthController extends GetxController {
   // --- CRITICAL HELPER FOR PRODUCT CONTROLLER ---
   // ProductController mein humne check lagaya tha:
   // if (await Get.find<AuthController>().isOnline()) ...
-  // Agar ye method nahi hoga to App Crash hogi.
+  // Iska faida: Products automatically Firebase par sync honge.
 
   Future<bool> isOnline() async {
-    // Development ke liye hum isay FALSE return kar rahe hain.
-    // Iska faida: ProductController Firebase par data send karne ki koshish nahi karega.
-    // Sirf SQLite (Local DB) use hoga, jo abhi hum test karna chahte hain.
-    return false;
+    // Now returning TRUE so Firebase sync works
+    // In production, you can add actual connectivity check here
+    return true;
   }
 }

@@ -208,10 +208,13 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   ),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
+                      // Get original product if editing
+                      final ProductModel? originalProduct = Get.arguments;
+
                       // Create Product Object
                       final ProductModel newProduct = ProductModel(
                         id:
-                            Get.arguments?.id ??
+                            originalProduct?.id ??
                             DateTime.now().millisecondsSinceEpoch.toString(),
                         name: nameController.text.trim(),
                         sku: skuController.text.trim(),
@@ -222,24 +225,16 @@ class _AddProductScreenState extends State<AddProductScreen> {
                         stock: int.tryParse(stockController.text) ?? 0,
                         category: selectedCategory!,
                         imagePath: selectedImage?.path ?? '',
-                        // If ProductModel.createdAt is a DateTime:
-                        createdAt: DateTime.now(),
-                        // If ProductModel.createdAt is a String, use:
-                        // createdAt: DateTime.now().toIso8601String(),
+                        // Preserve original createdAt for edits, new for adds
+                        createdAt: originalProduct?.createdAt ?? DateTime.now(),
+                        isSynced: false, // Mark as unsynced since it's modified
                       );
 
-                      // Call Controller
-                      if (Get.arguments == null) {
+                      // Call Controller - Add or Update
+                      if (originalProduct == null) {
                         _productController.addProduct(newProduct);
-                        Get.snackbar(
-                          'Success',
-                          'Product Added Successfully',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: Colors.green,
-                          colorText: Colors.white,
-                        );
                       } else {
-                        // _productController.updateProduct(newProduct); // Add update logic if needed
+                        _productController.updateProduct(newProduct);
                       }
 
                       Get.back(); // Close screen
