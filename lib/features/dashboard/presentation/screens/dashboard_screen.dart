@@ -180,13 +180,26 @@ class DashboardScreen extends StatelessWidget {
                 color: Colors.green,
               ),
             ),
-            const SizedBox(width: 12),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
             Expanded(
               child: QuickActionButton(
                 icon: Icons.add_box_outlined,
                 label: 'Add Product',
                 onTap: () => Get.toNamed('/add-product'),
                 color: Colors.blue,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: QuickActionButton(
+                icon: Icons.analytics_outlined,
+                label: 'Reports',
+                onTap: () => Get.toNamed('/reports'),
+                color: Colors.purple,
               ),
             ),
           ],
@@ -254,7 +267,7 @@ class DashboardScreen extends StatelessWidget {
               color: Colors.purple,
               onTap: () {
                 Get.back();
-                Get.snackbar('Coming Soon', 'Reports feature coming soon');
+                Get.toNamed('/reports');
               },
             ),
             _buildMenuItem(
