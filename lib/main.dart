@@ -35,16 +35,16 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'SmartPOS Mobile Manager',
 
-      // Theme setup (line 23)
+      // Theme configuration
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
 
-      // GetX Routes (line 27)
+      // Navigation routes
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
 
-      debugShowCheckedModeBanner: false, // use correct parameter name
+      debugShowCheckedModeBanner: false,
     );
   }
 }

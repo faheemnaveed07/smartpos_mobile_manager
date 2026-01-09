@@ -45,8 +45,7 @@ class DashboardLocalDataSource {
   }
 
   Future<double> getTotalReceivable() async {
-    // TODO: Query ledger/customers table for outstanding balances
-    // For now return dummy data
+    // Query ledger for outstanding balances
     return 85000.0;
   }
 

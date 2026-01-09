@@ -1,40 +1,51 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
+/// Firebase Authentication Service
+/// This service handles Firebase-based authentication.
+/// Currently using local SQLite auth (see AuthController).
+/// This service will be used when Firebase billing is enabled.
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Current user stream (line 5)
+  /// Stream of authentication state changes
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  // Login with email (line 8)
+  /// Login with email and password
   Future<User?> loginWithEmail(String email, String password) async {
     try {
-      // TODO: Complete this method
-      // HINT: Use _auth.signInWithEmailAndPassword()
-      return null; // Yahan user return karo
+      final result = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return result.user;
     } catch (e) {
       throw Exception('Login failed: ${e.toString()}');
     }
   }
 
-  // Signup with email (line 18)
+  /// Register with email and password
   Future<User?> signUpWithEmail(String email, String password) async {
     try {
-      // TODO: Implement signup logic
-      return null;
+      final result = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return result.user;
     } catch (e) {
       throw Exception('Signup failed: ${e.toString()}');
     }
   }
 
-  // Logout (line 28)
+  /// Logout current user
   Future<void> logout() async {
-    // TODO: Implement logout
+    await _auth.signOut();
   }
 
-  // Get current user ID (line 33)
+  /// Get current user ID
   String? getCurrentUserId() {
-    // TODO: Return current user ID
-    return null;
+    return _auth.currentUser?.uid;
   }
+
+  /// Get current user
+  User? get currentUser => _auth.currentUser;
 }

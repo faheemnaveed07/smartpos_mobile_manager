@@ -20,7 +20,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path,
-      version: 2, // Increment when adding tables
+      version: 4, // Increment to force migration
       onCreate: _createDB,
       onUpgrade: _upgradeDB,
     );
@@ -81,13 +81,52 @@ class DatabaseHelper {
         isSynced INTEGER DEFAULT 0
       )
     ''');
+
+    // User Profile table for Local Auth
+    await db.execute('''
+      CREATE TABLE user_profile (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        phone TEXT,
+        shopName TEXT,
+        createdAt TEXT NOT NULL
+      )
+    ''');
   }
 
   Future<void> _upgradeDB(Database db, int oldVersion, int newVersion) async {
     // Handle migrations
     if (oldVersion < 2) {
-      // Add updatedAt column to products
-      await db.execute('ALTER TABLE products ADD COLUMN updatedAt TEXT');
+      // Add updatedAt column to products if not exists
+      try {
+        await db.execute('ALTER TABLE products ADD COLUMN updatedAt TEXT');
+      } catch (e) {
+        // Column may already exist
+      }
+    }
+    if (oldVersion < 3) {
+      // Add user_profile table for local auth
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS user_profile (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          email TEXT NOT NULL UNIQUE,
+          password TEXT NOT NULL,
+          phone TEXT,
+          shopName TEXT,
+          createdAt TEXT NOT NULL
+        )
+      ''');
+    }
+    if (oldVersion < 4) {
+      // Ensure updatedAt column exists (for older databases)
+      try {
+        await db.execute('ALTER TABLE products ADD COLUMN updatedAt TEXT');
+      } catch (e) {
+        // Column already exists, ignore
+      }
     }
   }
 
@@ -279,5 +318,118 @@ class DatabaseHelper {
     final customers = await getUnsyncedCustomers();
     final ledger = await getUnsyncedLedgerEntries();
     return products.length + sales.length + customers.length + ledger.length;
+  }
+
+  // ==================== LOCAL AUTH (user_profile) ====================
+
+  /// Ensure user_profile table exists (fallback for old databases)
+  Future<void> _ensureUserProfileTable() async {
+    final db = await instance.database;
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS user_profile (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        email TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        phone TEXT,
+        shopName TEXT,
+        createdAt TEXT NOT NULL
+      )
+    ''');
+  }
+
+  /// Register a new local user
+  Future<Map<String, dynamic>?> registerUserLocal({
+    required String name,
+    required String email,
+    required String password,
+    String? phone,
+    String? shopName,
+  }) async {
+    final db = await instance.database;
+
+    // Ensure table exists first
+    await _ensureUserProfileTable();
+
+    // Check if email already exists
+    final existing = await db.query(
+      'user_profile',
+      where: 'email = ?',
+      whereArgs: [email.toLowerCase()],
+    );
+
+    if (existing.isNotEmpty) {
+      return null; // User already exists
+    }
+
+    final user = {
+      'id': DateTime.now().millisecondsSinceEpoch.toString(),
+      'name': name,
+      'email': email.toLowerCase(),
+      'password': password,
+      'phone': phone ?? '',
+      'shopName': shopName ?? 'My Shop',
+      'createdAt': DateTime.now().toIso8601String(),
+    };
+
+    await db.insert('user_profile', user);
+    return user;
+  }
+
+  /// Login with email and password
+  Future<Map<String, dynamic>?> loginUserLocal({
+    required String email,
+    required String password,
+  }) async {
+    final db = await instance.database;
+
+    // Ensure table exists first
+    await _ensureUserProfileTable();
+
+    final result = await db.query(
+      'user_profile',
+      where: 'email = ? AND password = ?',
+      whereArgs: [email.toLowerCase(), password],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first;
+    }
+    return null; // Invalid credentials
+  }
+
+  /// Get current user by ID
+  Future<Map<String, dynamic>?> getCurrentUserLocal(String id) async {
+    final db = await instance.database;
+
+    // Ensure table exists first
+    await _ensureUserProfileTable();
+
+    final result = await db.query(
+      'user_profile',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first;
+    }
+    return null;
+  }
+
+  /// Get user by email
+  Future<Map<String, dynamic>?> getUserByEmail(String email) async {
+    final db = await instance.database;
+
+    final result = await db.query(
+      'user_profile',
+      where: 'email = ?',
+      whereArgs: [email.toLowerCase()],
+    );
+
+    if (result.isNotEmpty) {
+      return result.first;
+    }
+    return null;
   }
 }

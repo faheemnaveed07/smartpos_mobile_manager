@@ -30,7 +30,7 @@ class SignupScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Logo Animation (line 35)
+                  // Logo
                   BounceInDown(
                     child: Center(
                       child: Icon(
@@ -42,7 +42,7 @@ class SignupScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 40),
 
-                  // Title (line 46)
+                  // Title
                   FadeInLeft(
                     child: Text(
                       'Create Account',
@@ -52,7 +52,7 @@ class SignupScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  // Full Name Field (line 56) - YEH ADD KARO
+                  // Full Name Field
                   FadeInUp(
                     child: TextFormField(
                       controller: _nameController,
@@ -67,13 +67,13 @@ class SignupScreen extends StatelessWidget {
                         if (value == null || value.isEmpty) {
                           return 'Name is required';
                         }
-                        return null; // TODO: Add more validation if needed
+                        return null;
                       },
                     ),
                   ),
                   const SizedBox(height: 20),
 
-                  // Email Field (line 75) - SAME AS LOGIN
+                  // Email Field
                   FadeInUp(
                     child: TextFormField(
                       controller: _emailController,
@@ -89,7 +89,7 @@ class SignupScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  // Phone Field (line 94) - YEH ADD KARO
+                  // Phone Field
                   FadeInUp(
                     child: TextFormField(
                       controller: _phoneController,
@@ -107,7 +107,7 @@ class SignupScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  // Password Field (line 113) - SAME AS LOGIN
+                  // Password Field
                   FadeInUp(
                     child: TextFormField(
                       controller: _passwordController,
@@ -124,7 +124,7 @@ class SignupScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-                  // Confirm Password Field (line 132) - YEH ADD KARO
+                  // Confirm Password Field
                   FadeInUp(
                     child: TextFormField(
                       controller: _confirmPasswordController,
@@ -146,7 +146,7 @@ class SignupScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 30),
 
-                  // Signup Button (line 153)
+                  // Signup Button
                   Obx(() {
                     return _authController.isLoading.value
                         ? const Center(child: CircularProgressIndicator())
@@ -164,20 +164,12 @@ class SignupScreen extends StatelessWidget {
                                 ),
                                 onPressed: () {
                                   if (_formKey.currentState!.validate()) {
-                                    // TODO: Implement signup method in AuthController
                                     _authController.signUp(
                                       _emailController.text.trim(),
                                       _passwordController.text,
-                                      _nameController.text,
-                                      _phoneController.text,
+                                      _nameController.text.trim(),
+                                      _phoneController.text.trim(),
                                     );
-                                    Get.snackbar(
-                                      'Success',
-                                      'Account created! Please login.',
-                                      snackPosition: SnackPosition.BOTTOM,
-                                      backgroundColor: Colors.green,
-                                    );
-                                    Get.offNamed('/login');
                                   }
                                 },
                                 child: const Text(
@@ -190,7 +182,7 @@ class SignupScreen extends StatelessWidget {
                   }),
                   const SizedBox(height: 20),
 
-                  // Login Link (line 173)
+                  // Login Link
                   FadeInUp(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

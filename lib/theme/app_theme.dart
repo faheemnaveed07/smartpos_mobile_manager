@@ -13,11 +13,11 @@ class AppTheme {
       primaryColor: primaryColor,
       scaffoldBackgroundColor: const Color(0xFFF5F7FA),
 
-      // AppBar theme (line 18)
+      // AppBar Theme
       appBarTheme: AppBarTheme(
         backgroundColor: primaryColor,
         elevation: 0,
-        foregroundColor: Colors.white, // Title & icons color
+        foregroundColor: Colors.white,
         iconTheme: const IconThemeData(color: Colors.white),
         actionsIconTheme: const IconThemeData(color: Colors.white),
         titleTextStyle: GoogleFonts.poppins(
@@ -27,28 +27,28 @@ class AppTheme {
         ),
       ),
 
-      // Card theme (line 27)
+      // Card Theme
       cardTheme: CardThemeData(
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
 
-      // Button theme (line 34)
+      // Button Theme
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: accentColor,
-          foregroundColor: Colors.white, // Button text color
+          foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
       ),
 
-      // Text theme (line 44)
+      // Text Theme
       textTheme: GoogleFonts.poppinsTextTheme(),
     );
   }
 
-  // Dark Theme - Optional, lekin rakh lo
+  // Dark Theme
   static ThemeData get darkTheme {
     return ThemeData(/* ...dark theme logic... */);
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import '../../core/utils/validators.dart'; // Ensure ye file exist karti ho
+import '../../core/utils/validators.dart';
 import '../../controllers/auth_controller.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -25,17 +25,17 @@ class LoginScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Logo animation
+                  // Logo
                   BounceInDown(
                     child: Center(
                       child: SvgPicture.asset(
-                        'assets/logo.svg', // Make sure assets folder mein logo.svg ho
+                        'assets/logo.svg',
                         height: 120,
                         placeholderBuilder: (context) => const Icon(
                           Icons.store,
                           size: 100,
                           color: Colors.blue,
-                        ), // Fallback icon
+                        ),
                       ),
                     ),
                   ),

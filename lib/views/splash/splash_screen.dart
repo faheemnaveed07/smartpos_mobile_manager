@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,13 +18,20 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   void _navigateToNext() async {
-    // 3-second delay (line 18)
+    // 3-second delay for splash animation
     await Future.delayed(const Duration(seconds: 3));
 
-    // Check user logged in? (line 21)
-    // TODO: Get.find<AuthController>().checkLoginStatus();
+    // Check if user was previously logged in (Local Auth)
+    final prefs = await SharedPreferences.getInstance();
+    final isLoggedIn = prefs.getBool('isLoggedIn') ?? false;
 
-    Get.offNamed('/login'); // TODO: Logic daalna hai
+    if (isLoggedIn) {
+      // User has active session - go to dashboard
+      Get.offNamed('/dashboard');
+    } else {
+      // No session - go to login
+      Get.offNamed('/login');
+    }
   }
 
   @override
@@ -33,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Logo animation (line 32)
+            // App Logo
             BounceInDown(
               child: const Icon(
                 Icons.store_mall_directory,
@@ -42,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            // App name fade in (line 40)
+            // App Name
             FadeInUp(
               child: Text(
                 'SmartPOS Manager',
