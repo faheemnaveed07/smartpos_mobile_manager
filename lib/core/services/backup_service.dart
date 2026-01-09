@@ -22,6 +22,10 @@ class BackupService extends GetxService {
   final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
   bool _isInitialized = false;
 
+  // Web Client ID for serverClientId (required for Android)
+  static const String _serverClientId =
+      '86432102508-7nb2t0u06tcmg9l1fi8oolo0qgnuhe41.apps.googleusercontent.com';
+
   @override
   void onInit() {
     super.onInit();
@@ -33,8 +37,8 @@ class BackupService extends GetxService {
     if (_isInitialized) return;
 
     try {
-      // Initialize without clientId for Android (uses google-services.json)
-      await _googleSignIn.initialize();
+      // Initialize with serverClientId for Android
+      await _googleSignIn.initialize(serverClientId: _serverClientId);
       _isInitialized = true;
 
       // Listen for authentication events
@@ -46,16 +50,32 @@ class BackupService extends GetxService {
         }
       });
 
-      // Try lightweight auth (silent sign-in)
-      await _googleSignIn.attemptLightweightAuthentication();
+      // Try lightweight auth (silent sign-in) - ignore errors
+      try {
+        await _googleSignIn.attemptLightweightAuthentication();
+      } catch (_) {
+        // Silent sign-in failed, user will need to sign in manually
+      }
     } catch (e) {
-      print('Google Sign-In init error: $e');
+      // Google Sign-In not configured - ignore silently on startup
+      debugPrint('Google Sign-In init: $e');
     }
   }
 
   Future<drive.DriveApi?> _getDriveApi() async {
     try {
       await _initGoogleSignIn();
+
+      if (!_isInitialized) {
+        Get.snackbar(
+          'Setup Required',
+          'Google Drive backup requires OAuth configuration. Please contact developer.',
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 4),
+        );
+        return null;
+      }
 
       // If not signed in, authenticate
       if (currentUser.value == null) {
@@ -65,6 +85,8 @@ class BackupService extends GetxService {
           Get.snackbar(
             'Error',
             'Google Sign-In not supported on this platform',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
           );
           return null;
         }
@@ -72,7 +94,12 @@ class BackupService extends GetxService {
 
       final user = currentUser.value;
       if (user == null) {
-        Get.snackbar('Sign-In Required', 'Please sign in with Google');
+        Get.snackbar(
+          'Sign-In Required',
+          'Please sign in with Google to use backup',
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+        );
         return null;
       }
 
@@ -88,7 +115,14 @@ class BackupService extends GetxService {
       final authenticateClient = GoogleAuthClient(authHeaders);
       return drive.DriveApi(authenticateClient);
     } catch (e) {
-      Get.snackbar('Auth Error', e.toString());
+      Get.snackbar(
+        'Backup Unavailable',
+        'Google Drive backup is not configured yet',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+      debugPrint('Drive API error: $e');
       return null;
     }
   }

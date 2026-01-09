@@ -8,6 +8,7 @@ import 'routes/app_pages.dart';
 import 'services/sqlite_service.dart';
 import 'core/services/sync_service.dart';
 import 'core/services/backup_service.dart';
+import 'controllers/auth_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +21,8 @@ void main() async {
   final database = await sqliteService.database;
   Get.put<Database>(database); // Register database globally
 
-  // Initialize SyncService and BackupService as GetxServices
+  // Initialize Core Controllers and Services
+  Get.put(AuthController());
   Get.put(SyncService());
   Get.put(BackupService());
 

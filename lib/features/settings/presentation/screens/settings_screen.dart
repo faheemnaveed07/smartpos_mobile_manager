@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:glassmorphism_ui/glassmorphism_ui.dart';
+import '../../../../controllers/auth_controller.dart';
 import '../../../../core/services/backup_service.dart';
 import '../../../../core/services/sync_service.dart';
 
@@ -142,6 +143,75 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+
+          const SizedBox(height: 30),
+          const Text(
+            "Account",
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+
+          // LOGOUT CARD
+          GlassContainer(
+            blur: 10,
+            borderRadius: BorderRadius.circular(16),
+            child: ListTile(
+              leading: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.red.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.logout, color: Colors.red),
+              ),
+              title: const Text(
+                "Logout",
+                style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              subtitle: const Text("Sign out from your account"),
+              trailing: const Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Colors.red,
+              ),
+              onTap: () => _showLogoutConfirmation(),
+            ),
+          ),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  void _showLogoutConfirmation() {
+    Get.dialog(
+      AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.logout, color: Colors.red),
+            SizedBox(width: 10),
+            Text("Logout"),
+          ],
+        ),
+        content: const Text(
+          "Are you sure you want to logout from your account?",
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text("Cancel")),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () {
+              Get.back();
+              Get.find<AuthController>().logout();
+            },
+            child: const Text("Logout"),
           ),
         ],
       ),
