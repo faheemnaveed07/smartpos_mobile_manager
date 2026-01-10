@@ -1,7 +1,7 @@
 # SmartPOS Mobile Manager 🚀
 
 **A Production-Ready Offline-First POS System for Mobile Shops**  
-*Developed for COMSATS University, Vehari - CS 6th Semester*
+*Developed by AiLab Solution*
 
 > "A complete mobile shop management solution with Udhaar tracking, auto-sync, and Google Drive backup"
 
@@ -126,21 +126,17 @@ flutter build apk --release --split-per-abi
 
 ---
 
-## 🎓 Academic Context
+
+## 🏢 Company Info
 
 | Field | Details |
 |:------|:--------|
-| **Institution** | COMSATS University Vehari |
-| **Program** | Computer Science |
-| **Semester** | 6th |
-| **Instructor** | Abdullah Wali |
-| **Student** | Muhammad Soman Ashraf |
-| **Registration #** | FA23-BSE-153 |
+| **Company** | AiLab Solution |
+| **Project Lead** | Bilal Saeed |
+| **Developer** | Faheem Naveed |
 
-### ✅ Components Delivered
+### ✅ Project Highlights
 
-- ✅ 12/12 Tasks from MAD Lab Final
-- ✅ 125/125 Marks Criteria Met
 - ✅ Clean Architecture (SOLID Principles)
 - ✅ Offline-First Implementation
 - ✅ Production APK + GitHub Repository
@@ -199,15 +195,15 @@ This is a semester project. For academic inquiries, please contact:
 
 | Contact | Details |
 |:--------|:--------|
-| 📧 **Email** | somanashraf17@gmail.com |
-| 📱 **Phone** | +92 3087541795 |
+| 📧 **Email** | faheemnaveed09@gmail.com |
+| 📱 **Phone** | +923187371655 |
 
 ---
 
 <div align="center">
 
-**Made with ❤️ by Muhammad Soman Ashraf**  
+**Made with ❤️ by Faheem Naveed**  
 
-*COMSATS University Vehari - Department of Computer Science*
+*AiLab Solution*
 
 </div>
